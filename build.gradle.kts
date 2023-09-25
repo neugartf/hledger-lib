@@ -61,6 +61,8 @@ kotlin {
 val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
     val dependencies = project.dependencies
 
+
+
     antlrClasspath = configurations.detachedConfiguration(
         dependencies.create("org.antlr:antlr4:4.7.1"),
         dependencies.create("com.strumenta.antlr-kotlin:antlr-kotlin-target:47dc4517bf"),
@@ -74,6 +76,14 @@ val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
         }
     outputDirectory = buildDir.resolve("generated-temp").resolve("commonMain").resolve("kotlin")
 }
-tasks.filter { it.name.startsWith("compileKotlin") }.forEach { it.dependsOn("generateCommonParserSource") }// to allow -x jsIrBrowserTest -x jsLegacyBrowserTest, see .ci.sh
+tasks.filter { it.name.startsWith("compile") }.forEach {
+    println(it)
+    it.dependsOn("generateCommonParserSource")
+}
 tasks.register("jsIrBrowserTest")
 tasks.register("jsLegacyBrowserTest")
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+    println(this)
+    this.dependsOn("generateCommonParserSource")
+}

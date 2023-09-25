@@ -121,7 +121,7 @@ class GrammarParserTest {
                 ambigAlts: BitSet,
                 configs: ATNConfigSet
             ) {
-                TODO("Not yet implemented")
+                println()
             }
 
             override fun reportAttemptingFullContext(
@@ -132,7 +132,7 @@ class GrammarParserTest {
                 conflictingAlts: BitSet,
                 configs: ATNConfigSet
             ) {
-                TODO("Not yet implemented")
+
             }
 
             override fun reportContextSensitivity(
@@ -143,7 +143,7 @@ class GrammarParserTest {
                 prediction: Int,
                 configs: ATNConfigSet
             ) {
-                TODO("Not yet implemented")
+
             }
 
             override fun syntaxError(
