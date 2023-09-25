@@ -35,6 +35,7 @@ buildscript {
 }
 
 kotlin {
+    jvmToolchain(17)
     jvm {
         withJava()
         testRuns.named("test") {
@@ -44,6 +45,7 @@ kotlin {
         }
     }
     js {
+        nodejs()
     }
 
     
@@ -89,6 +91,10 @@ val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
     outputDirectory = buildDir.resolve("generated-temp").resolve("commonMain").resolve("kotlin")
 }
 tasks.filter { it.name.startsWith("compile") }.forEach {
+    println(it)
+    it.dependsOn("generateCommonParserSource")
+}
+tasks.filter { it.name.endsWith("sourcesJar")}.forEach {
     println(it)
     it.dependsOn("generateCommonParserSource")
 }
