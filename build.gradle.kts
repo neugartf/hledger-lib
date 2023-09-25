@@ -2,8 +2,20 @@ import com.strumenta.antlrkotlin.gradleplugin.AntlrKotlinTask
 
 plugins {
     kotlin("multiplatform") version "1.9.0"
+    `maven-publish`
 }
-
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/neugartf/hledger-lib")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
+}
 group = "com.neugartf"
 version = "1.0-SNAPSHOT"
 
