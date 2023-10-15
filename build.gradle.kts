@@ -30,7 +30,7 @@ buildscript {
         maven("https://jitpack.io")
     }
     dependencies {
-        classpath("com.strumenta.antlr-kotlin:antlr-kotlin-gradle-plugin:47dc4517bf")
+        classpath("com.strumenta.antlr-kotlin:antlr-kotlin-gradle-plugin:47dc451")
     }
 }
 
