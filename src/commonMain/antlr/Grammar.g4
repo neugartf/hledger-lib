@@ -5,18 +5,18 @@ file_:  transaction* EOF;
 
 
 date: NUMBER '-' NUMBER '-' NUMBER;
-description: (WORD|WS)+;
+description: (WORD | WS )+;
 
-transaction: date WS? description EOL (default_posting|commodity_posting)+;
+transaction: date WS? description EOL (WS+  default_posting|WS+  commodity_posting)+;
 quantity: NUMBER;
 commodity_name: WORD;
 commodity:  quantity WS? commodity_name WS? '@' WS? unit_price;
 default_posting: account WS? (currency amount)? (EOL|EOF);
 commodity_posting: account WS? commodity? (EOL|EOF);
-account:ACCOUNTS;
+account: (WORD | WS | ':')+;
 currency: ('$'|'€');
 amount:  DASH? NUMBER;
-unit_price: currency NUMBER;
+unit_price: currency amount;
 
 // Lexer rules
 
@@ -32,4 +32,3 @@ EOL
    ;
 WORD: (LOWERCASE | UPPERCASE | '_')+ ;
 NUMBER  : DIGIT+ ('.' DIGIT+)? ;
-ACCOUNTS:  (WORD | ':' )+;
