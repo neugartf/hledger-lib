@@ -22,10 +22,14 @@ class GrammarParserTest {
         val charStream = CharStreams.fromString(
             """
             2022-01-01 opening balances
-                assets:bank:checking        $1000  
+                assets:bank:checking        $1000
                 assets:bank:savings         $2000 
                 assets:cash:wallet           $100
                 liabilities:credit card     $-200
+                equity
+                
+            2022-01-01
+                assets:bank:checking        $1000
                 equity
         """.trimIndent()
         )
@@ -47,7 +51,15 @@ class GrammarParserTest {
                     Posting.DefaultPosting("liabilities:credit card", Currency.Dollar, -200f),
                     Posting.DefaultPosting("equity"),
                 )
-            )),
+            ),
+                Transaction(
+                    date = LocalDate.parse("2022-01-01"),
+                    description = null,
+                    postings = mutableListOf(
+                        Posting.DefaultPosting("assets:bank:checking", Currency.Dollar, 1000f),
+                        Posting.DefaultPosting("equity"),
+                    )
+                )),
             listenerImpl.entries
         )
 
@@ -59,7 +71,7 @@ class GrammarParserTest {
             """
             2022-01-01 Cost in another commodity can
                 assets:investments           2.0 AAAA @ $1.0
-                assets:investments           3.0 AAAA @ $4
+                assets:investments           3.0 "A1AA" @ $4
                 assets:checking            $-7.00
 
             """.trimIndent()
@@ -77,7 +89,7 @@ class GrammarParserTest {
                 description = "Cost in another commodity can",
                 postings = mutableListOf(
                     Posting.CommodityPosting("assets:investments", "AAAA", 2.0f, Currency.Dollar, 1f),
-                    Posting.CommodityPosting("assets:investments", "AAAA", 3.0f, Currency.Dollar, 4f),
+                    Posting.CommodityPosting("assets:investments", "A1AA", 3.0f, Currency.Dollar, 4f),
                     Posting.DefaultPosting("assets:checking", Currency.Dollar, -7.00f),
                 )
             )),
