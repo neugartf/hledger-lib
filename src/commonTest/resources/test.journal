@@ -1,0 +1,10 @@
+2022-01-01 opening balances
+    assets:bank:checking        $1000
+    assets:bank:savings         $2000
+    assets:cash:wallet           $100
+    liabilities:credit card     $-200
+    equity
+                
+2022-01-01
+    assets:bank:checking        $1000
+    equity

@@ -1,22 +1,9 @@
 package com.neugartf.antlr.parser
 
+import com.neugartf.hledger.model.Posting
+import com.neugartf.hledger.model.Currency
+import com.neugartf.hledger.model.Transaction
 import kotlinx.datetime.LocalDate
-
-enum class Currency(val c: Char) {
-    Euro('€'), Dollar('$');
-
-    companion object {
-        fun fromChar(char: Char): Currency? = Currency.entries.find { it.c == char }
-    }
-
-}
-
-sealed class Posting(open var account: String? = null) {
-    data class DefaultPosting(override var account: String? = null, var currency: Currency? = null, var value: Float? = null): Posting(account)
-    data class CommodityPosting(override var account: String? = null, var name: String? = null, var quantity: Float?= null, var currency: Currency? = null, var unitPrice: Float? = null ):Posting(account)
-}
-data class Transaction(var date: LocalDate? = null, var description: String? = null,
-                       val postings: MutableList<Posting> = mutableListOf())
 
 class GrammarListenerImpl: GrammarBaseListener() {
 

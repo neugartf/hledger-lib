@@ -1,16 +1,12 @@
 package com.neugartf.antlr.parser
 
-import com.strumenta.kotlinmultiplatform.BitSet
+import com.neugartf.hledger.model.Posting
+import com.neugartf.hledger.model.Currency
+import com.neugartf.hledger.model.Transaction
 import kotlinx.datetime.LocalDate
-import org.antlr.v4.kotlinruntime.ANTLRErrorListener
 import org.antlr.v4.kotlinruntime.CharStreams
 import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ConsoleErrorListener
-import org.antlr.v4.kotlinruntime.Parser
-import org.antlr.v4.kotlinruntime.RecognitionException
-import org.antlr.v4.kotlinruntime.Recognizer
-import org.antlr.v4.kotlinruntime.atn.ATNConfigSet
-import org.antlr.v4.kotlinruntime.dfa.DFA
 import org.antlr.v4.kotlinruntime.tree.ParseTreeWalker
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,6 +15,7 @@ class GrammarParserTest {
 
     @Test
     fun testParser() {
+        // ASSIGN
         val charStream = CharStreams.fromString(
             """
             2022-01-01 opening balances
@@ -35,13 +32,19 @@ class GrammarParserTest {
         )
         val lexer = GrammarLexer(charStream)
         val tokenStream = CommonTokenStream(lexer)
-        val p = GrammarParser(tokenStream)
+        val parser = GrammarParser(tokenStream)
         val listenerImpl = GrammarListenerImpl()
-        p.addErrorListener(ConsoleErrorListener())
+        parser.addErrorListener(ConsoleErrorListener())
+
+        // ACT
         val walker = ParseTreeWalker()
-        walker.walk(listenerImpl, p.file_())
+        walker.walk(listenerImpl, parser.file_())
+        val result = listenerImpl.entries
+
+        // ASSERT
         assertEquals(
-            listOf(Transaction(
+            listOf(
+                Transaction(
                 date = LocalDate.parse("2022-01-01"),
                 description = "opening balances",
                 postings = mutableListOf(
@@ -59,14 +62,16 @@ class GrammarParserTest {
                         Posting.DefaultPosting("assets:bank:checking", Currency.Dollar, 1000f),
                         Posting.DefaultPosting("equity"),
                     )
-                )),
-            listenerImpl.entries
+                )
+            ),
+            result
         )
 
     }
 
     @Test
     fun testParserCommodity() {
+        // ASSIGN
         val charStream = CharStreams.fromString(
             """
             2022-01-01 Cost in another commodity can
@@ -78,13 +83,18 @@ class GrammarParserTest {
         )
         val lexer = GrammarLexer(charStream)
         val tokenStream = CommonTokenStream(lexer)
-        val p = GrammarParser(tokenStream)
-        val listenerImpl = GrammarListenerImpl()
-        p.addErrorListener(ConsoleErrorListener())
+        val parser = GrammarParser(tokenStream)
+        val listener = GrammarListenerImpl()
+        parser.addErrorListener(ConsoleErrorListener())
+
+        // ACT
         val walker = ParseTreeWalker()
-        walker.walk(listenerImpl, p.file_())
+        walker.walk(listener, parser.file_())
+
+        // ASSERT
         assertEquals(
-            listOf(Transaction(
+            listOf(
+                Transaction(
                 date = LocalDate.parse("2022-01-01"),
                 description = "Cost in another commodity can",
                 postings = mutableListOf(
@@ -92,8 +102,9 @@ class GrammarParserTest {
                     Posting.CommodityPosting("assets:investments", "A1AA", 3.0f, Currency.Dollar, 4f),
                     Posting.DefaultPosting("assets:checking", Currency.Dollar, -7.00f),
                 )
-            )),
-            listenerImpl.entries
+            )
+            ),
+            listener.entries
         )
     }
 

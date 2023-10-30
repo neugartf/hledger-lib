@@ -3,6 +3,7 @@ import com.strumenta.antlrkotlin.gradleplugin.AntlrKotlinTask
 plugins {
     kotlin("multiplatform") version "1.9.0"
     `maven-publish`
+    id("com.goncalossilva.resources") version "0.4.0"
 }
 publishing {
     repositories {
@@ -63,6 +64,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("com.goncalossilva:resources:0.4.0")
             }
         }
         val jvmMain by getting
