@@ -1,5 +1,6 @@
 package com.neugartf.antlr.parser
 
+import com.neugartf.hledger.antlr.parser.GrammarListenerImpl
 import com.neugartf.hledger.model.Posting
 import com.neugartf.hledger.model.Currency
 import com.neugartf.hledger.model.Transaction

@@ -55,6 +55,7 @@ kotlin {
             kotlin.srcDir("build/generated-temp/commonMain/kotlin")
             dependencies {
                 api(kotlin("stdlib-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
                 // add antlr-kotlin-runtime
                 // otherwise, the generated sources will not compile
@@ -90,7 +91,7 @@ val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
         .srcDir("src/commonMain/antlr").apply {
             include("*.g4")
         }
-    outputDirectory = buildDir.resolve("generated-temp").resolve("commonMain").resolve("kotlin")
+    outputDirectory = layout.buildDirectory.dir("generated-temp/commonMain/kotlin").get().asFile
 }
 tasks.filter { it.name.startsWith("compile") }.forEach {
     println(it)
