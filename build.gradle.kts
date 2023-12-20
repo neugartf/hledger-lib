@@ -3,20 +3,30 @@ import com.strumenta.antlrkotlin.gradleplugin.AntlrKotlinTask
 plugins {
     kotlin("multiplatform") version "1.9.0"
     `maven-publish`
+    signing
     id("com.goncalossilva.resources") version "0.4.0"
 }
 publishing {
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/neugartf/hledger-lib")
+            name = "mavenRepositorySnapshots"
+            url = uri("https://maven.droplet.neugartf.com/snapshots")
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
             }
         }
     }
 }
+
+
+signing {
+    useGpgCmd()
+    sign(configurations.archives.get())
+    sign(publishing.publications["kotlinMultiplatform"])
+}
+
+
 group = "com.neugartf"
 version = "1.0-SNAPSHOT"
 
@@ -47,6 +57,7 @@ kotlin {
     }
     js {
         nodejs()
+        binaries.library()
     }
 
     
@@ -77,9 +88,6 @@ kotlin {
 
 val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
     val dependencies = project.dependencies
-
-
-
     antlrClasspath = configurations.detachedConfiguration(
         dependencies.create("org.antlr:antlr4:4.7.1"),
         dependencies.create("com.strumenta.antlr-kotlin:antlr-kotlin-target:47dc4517bf"),
@@ -94,10 +102,9 @@ val generateCommonParserSource by tasks.creating(AntlrKotlinTask::class) {
     outputDirectory = layout.buildDirectory.dir("generated-temp/commonMain/kotlin").get().asFile
 }
 tasks.filter { it.name.startsWith("compile") }.forEach {
-    println(it)
     it.dependsOn("generateCommonParserSource")
 }
-tasks.filter { it.name.endsWith("sourcesJar")}.forEach {
+tasks.filter { it.name.endsWith("sourcesJar", true)}.forEach {
     println(it)
     it.dependsOn("generateCommonParserSource")
 }
@@ -105,6 +112,5 @@ tasks.register("jsIrBrowserTest")
 tasks.register("jsLegacyBrowserTest")
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
-    println(this)
     this.dependsOn("generateCommonParserSource")
 }
