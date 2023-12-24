@@ -4,7 +4,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-
-
 rootProject.name = "hledger-lib"
